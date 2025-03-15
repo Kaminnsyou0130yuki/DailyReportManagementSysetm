@@ -100,7 +100,8 @@ public class EmployeeController {
 
     // 従業員削除処理
     @PostMapping(value = "/{code}/delete")
-    public String delete(@PathVariable("code") String code, @AuthenticationPrincipal UserDetail userDetail, Model model) {
+    public String delete(@PathVariable("code") String code, @AuthenticationPrincipal UserDetail userDetail,
+            Model model) {
 
         ErrorKinds result = employeeService.delete(code, userDetail);
 
@@ -114,15 +115,40 @@ public class EmployeeController {
     }
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-@GetMapping(value = "/update")
-public String update(@ModelAttribute Employee employee) {
-
-return "employees/update";
-}
-
-
-
+    //更新画面
+    @GetMapping(value = "/update/{code}/")
+    public String update(@PathVariable("code") String code, Model model) {
+        model.addAttribute("employee", employeeService.findByCode(code));
+        return "employees/update";
+    }
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

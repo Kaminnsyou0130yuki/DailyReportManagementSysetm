@@ -46,11 +46,9 @@
                 <!--権限-->
                 <div class="mb-3">
                     <label class="form-label" for="role">権限</label>
-                    <select class="from-select" id="role" name="role">
-                        <option th:each="role : ${roles}"
-                        th:value="${role}"
-                        th:text="${role}"
-                        th:selected="${role == currentRole}"></option>
+                    <select class="form-select" id="role" name="role">
+                        <option th:value="一般" th:selected="${'一般' == employee.role.getValue}">一般</option>
+                        <option th:value="管理者" th:selected="${'管理者' == employee.role.getValue}">管理者</option>
                     </select>
                 </div>
 

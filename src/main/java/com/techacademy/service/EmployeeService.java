@@ -50,7 +50,7 @@ public class EmployeeService {
         return ErrorKinds.SUCCESS;
     }
 
-//
+    //更新処理
     @Transactional
     public ErrorKinds update(String code, Employee employee) {
 

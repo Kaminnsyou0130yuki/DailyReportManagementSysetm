@@ -50,6 +50,33 @@ public class EmployeeService {
         return ErrorKinds.SUCCESS;
     }
 
+//
+    @Transactional
+    public ErrorKinds update(String code, Employee employee) {
+
+        Employee beforeEmployee = findByCode(code);
+
+        if ("".equals(employee.getPassword())) {
+            employee.setPassword(beforeEmployee.getPassword());
+
+        } else {
+            // パスワードチェック
+            ErrorKinds result = employeePasswordCheck(employee);
+            if (ErrorKinds.CHECK_OK != result) {
+                return result;
+            }
+        }
+
+        employee.setDeleteFlg(beforeEmployee.isDeleteFlg());
+        employee.setCreatedAt(beforeEmployee.getCreatedAt());
+
+        LocalDateTime now = LocalDateTime.now();
+        employee.setUpdatedAt(now);
+
+        employeeRepository.save(employee);
+        return ErrorKinds.SUCCESS;
+    }
+
     // 従業員削除
     @Transactional
     public ErrorKinds delete(String code, UserDetail userDetail) {

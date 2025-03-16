@@ -17,6 +17,7 @@ import com.techacademy.constants.ErrorKinds;
 import com.techacademy.constants.ErrorMessage;
 
 import com.techacademy.entity.Employee;
+import com.techacademy.repository.EmployeeRepository;
 import com.techacademy.service.EmployeeService;
 import com.techacademy.service.UserDetail;
 
@@ -24,11 +25,14 @@ import com.techacademy.service.UserDetail;
 @RequestMapping("employees")
 public class EmployeeController {
 
+    private final EmployeeRepository employeeRepository;
+
     private final EmployeeService employeeService;
 
     @Autowired
-    public EmployeeController(EmployeeService employeeService) {
+    public EmployeeController(EmployeeService employeeService, EmployeeRepository employeeRepository) {
         this.employeeService = employeeService;
+        this.employeeRepository = employeeRepository;
     }
 
     // 従業員一覧画面
@@ -114,41 +118,34 @@ public class EmployeeController {
         return "redirect:/employees";
     }
 
-///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-    //更新画面
-    @GetMapping(value = "/update/{code}/")
-    public String update(@PathVariable("code") String code, Model model) {
-        model.addAttribute("employee", employeeService.findByCode(code));
+    // 更新画面
+    @GetMapping(value = "/{code}/update")
+    public String edit(@PathVariable("code") String code, @ModelAttribute Employee employee, Model model) {
+
+        if (code != null) {
+            model.addAttribute("employee", employeeService.findByCode(code));
+        } else {
+            model.addAttribute("employee", employee);
+        }
+
         return "employees/update";
     }
 
-///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    //更新処理
+    @PostMapping(value = "/{code}/update")
+    public String update(@PathVariable("code") String code, @ModelAttribute @Validated Employee employee,
+            BindingResult res, Model model) {
 
+        if (res.hasErrors()) {
+            return edit(null, employee, model);
+        }
+
+        ErrorKinds result = employeeService.update(code, employee);
+
+        if (ErrorMessage.contains(result)) {
+            model.addAttribute(ErrorMessage.getErrorName(result), ErrorMessage.getErrorValue(result));
+            return edit(null, employee, model);
+        }
+        return "redirect:/employees";
+    }
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

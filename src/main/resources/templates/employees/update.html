@@ -5,7 +5,7 @@
 
 <body class="h-100 overflow-hidden">
 
-    <div class="row h-100">
+    <div class="row h-100 w-100">
         <!--サイドバー-->
         <div class="h-100 p-3 mb-2 bg-dark text-white col-sm-2">
             <nav th:replace="common/side :: copy"></nav>
@@ -20,53 +20,63 @@
                 <h1 class="h3 mb-3">従業員 更新画面</h1>
             </div>
             <!--タイトルここまで-->
+            <div class="alert alert-secondary p-2 mb-0">パスワードは変更する場合のみ入力してください</div>
 
             <!--コンテンツ-->
+            <div class="card">
+                <div class="card-body">
 
-            <p>パスワードは変更する場合のみ入力してださい</p>
+                    <!--入力フォーム-->
+                    <form th:action="@{/employees/{code}/update(code=${code})}" th:object="${employee}"
+                        th:method="post">
 
-            <!--入力フォーム-->
-            <form th:action="@{/employees/{code}/update(code=${code})}" th:object="${employee}" th:method="post">
+                        <!--社員番号-->
+                        <div class="mb-3">
+                            <label class="form-label" for="code">社員番号</label>
+                            <input class="form-control form-control-lg bg-white border-0" th:field="*{code}" id="code"
+                                disabled>
+                        </div>
+                        <!--氏名-->
+                        <div class="mb-3">
+                            <label class="form-label" for="name">氏名</label>
+                            <input class="form-control form-control-lg" style="max-width: 600px;" th:field="*{name}" id="name">
+                            <span th:errors="*{name}" class="text-danger"></span>
+                        </div>
+                        <!--パスワード-->
+                        <div class="mb-3">
+                            <label class="formlabel" for="password">パスワード</label>
+                            <input class="form-control form-control-lg" style="max-width: 600px;" type="password" id="password" name="password">
+                            <span th:if="${passwordError} neq null" th:text="${passwordError}"
+                                class="text-danger"></span>
+                        </div>
 
-                <!--社員番号-->
-                <div class="mb-3">
-                    <label class="form-label" for="code">社員番号</label>
-                    <input class="form-control form-control-lg" th:field="*{code}" id="code" disabled>
+                        <!--権限-->
+                        <div class="mb-3">
+                            <label class="form-label" for="role">権限</label>
+                            <select class="form-select" style="max-width: 300px;" th:field="*{role}" id="role">
+                                <option th:each="item:${T(com.techacademy.entity.Employee.Role).values()}"
+                                    th:value="${item}" th:text="${item.getValue()}" th:selected="*{role} == ${item}">
+                            </select>
+                        </div>
+
+                        <!--空白-->
+                        <p class="mb-5"></p>
+
+                        <!--更新・戻るボタン-->
+                        <div class="col-auto">
+                            <input type="submit" value="更新" class="btn btn btn-primary">
+                            <a th:href="@{/employees}" class="btn btn-primary">戻る</a>
+                        </div>
+
+                        <!--空白-->
+                        <p class="mb-3"></p>
+
+                    </form>
+                    <!--入力フォームここまで-->
+
+                    <!--コンテンツここまで-->
                 </div>
-                <!--氏名-->
-                <div class="mb-3">
-                    <label class="form-label" for="name">氏名</label>
-                    <input class="form-control form-control-lg" th:field="*{name}" id="name">
-                    <span th:errors="*{name}" class="text-danger"></span>
-                </div>
-                <!--パスワード-->
-                <div class="mb-3">
-                    <label class="formlabel" for="password">パスワード</label>
-                    <input class="form-control form-control-lg" type="password" id="password" name="password">
-                    <span th:if="${passwordError} neq null" th:text="${passwordError}" class="text-danger"></span>
-                </div>
-
-                <!--権限-->
-                <div class="mb-3">
-                    <label class="form-label" for="role">権限</label>
-                    <select class="form-select" th:field="*{role}" id="role">
-                        <option th:each="item:${T(com.techacademy.entity.Employee.Role).values()}" th:value="${item}"
-                            th:text="${item.getValue()}" th:selected="*{role} == ${item}">
-                    </select>
-                </div>
-
-                <!--空白-->
-                <p class="mb-5"></p>
-
-                <!--更新・戻るボタン-->
-                <div class="col-auto">
-                    <input type="submit" value="更新" class="btn btn btn-primary">
-                    <a th:href="@{/employees}" class="btn btn-primary">戻る</a>
-                </div>
-            </form>
-            <!--入力フォームここまで-->
-
-            <!--コンテンツここまで-->
+            </div>
         </div>
     </div>
     <!--メインコンテンツここまで-->

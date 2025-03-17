@@ -25,7 +25,32 @@
             <!--コンテンツ-->
             <div class="card">
                 <div class="card-body">
-
+                    <!--入力フォーム-->
+                    <form th:action="@{/add}" th:object="${employee}" th:method="post">
+                        <!--日付-->
+                        <div class="mb-3">
+                            <label class="form-label" for="reportDate">日付</label>
+                            <input class="form-control form-control-lg" type="date" style="max-width: 300px;" id="reportDate">
+                        </div>
+                        <!--氏名-->
+                        <div class="mb-3">
+                            <label class="form-label" for="name">氏名</label>
+                            <input class="form-control form-control-lg bg-white border-0" style="max-width: 600px;"
+                                th:field="*{name}" id="name" disabled>
+                        </div>
+                        <!--タイトル-->
+                        <div class="mb-3">
+                            <label class="form-label" for="title">タイトル</label>
+                            <input class="form-control form-control-lg" style="max-width: 500px;" id="title">
+                        </div>
+                        <!--内容-->
+                        <div class="mb-3">
+                            <label class="form-label" for="content">内容</label>
+                            <textarea class="form-control form-control-lg" style="max-width: 700px; height: 300px;"
+                            id="content"></textarea>
+                        </div>
+                    </form>
+                    <!--入力フォームここまで-->
                 </div>
                 <!--コンテンツここまで-->
 

@@ -2,7 +2,6 @@ package com.techacademy.controller;
 
 import com.techacademy.entity.DailyReport;
 import com.techacademy.entity.Employee;
-import com.techacademy.repository.DailyReportRepository;
 import com.techacademy.service.DailyReportService;
 import com.techacademy.service.EmployeeService;
 import com.techacademy.service.UserDetailService;
@@ -21,21 +20,15 @@ import org.springframework.web.bind.annotation.RequestMapping;
 @RequestMapping("reports")
 public class DailyReportController {
 
-    private final EmployeeController employeeController;
-    private final DailyReportRepository dailyReportRepository;
     private final DailyReportService dailyReportService;
     private final EmployeeService employeeService;
 
     @Autowired
-    DailyReportController(DailyReportService dailyReportService, EmployeeService employeeService,
-            DailyReportRepository dailyReportRepository, UserDetailService userDetailService,
-            EmployeeController employeeController) {
+    DailyReportController(DailyReportService dailyReportService,
+            EmployeeService employeeService,UserDetailService userDetailService) {
 
         this.dailyReportService = dailyReportService;
         this.employeeService = employeeService;
-        this.dailyReportRepository = dailyReportRepository;
-        this.employeeController = employeeController;
-
     }
 
 //    日報一覧画面
@@ -45,14 +38,14 @@ public class DailyReportController {
         model.addAttribute("listSize", dailyReportService.findAll().size());
         model.addAttribute("dairyReportList", dailyReportService.findAll());
         return "dailyReport/dailyReportList";
-
     }
 
 //    新規登録画面
     @GetMapping("/add")
-    public String create(Principal principal, Model model) {
+    public String create(@ModelAttribute DailyReport dailyReport, Principal principal, Model model) {
         String code = principal.getName();
-        model.addAttribute("employee", employeeService.findByCode(code));
+        Employee employee = employeeService.findByCode(code);
+        dailyReport.setEmployee(employee);
         return "dailyReport/dailyReportNew";
     }
 
@@ -61,9 +54,8 @@ public class DailyReportController {
     @PostMapping("/add")
     public String add(@ModelAttribute DailyReport dailyReport, Principal principal, Model model) {
         String code = principal.getName();
-        Employee employeeCode = employeeService.findByCode(code);
-        dailyReport.setEmployee(employeeCode);
-//        saveメソッドを作成する　EmployeeServiceクラスを参考にする
+        Employee employee = employeeService.findByCode(code);
+        dailyReport.setEmployee(employee);
         dailyReportService.save(dailyReport);
         return "redirect:/reports";
     }

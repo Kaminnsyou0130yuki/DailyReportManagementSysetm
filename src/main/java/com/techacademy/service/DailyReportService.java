@@ -1,7 +1,6 @@
 package com.techacademy.service;
 
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -28,13 +27,9 @@ public class DailyReportService {
 //    後で入力チェックの処理追加実装する
     public void save(DailyReport dailyReport) {
         LocalDateTime now = LocalDateTime.now();
-
-//修正ここから-----------------------------------------------------------------------------------
-        //仮の処理。reportDateは入力フォームの値を格納するので、現在の処理は間違い。
-        dailyReport.setReportDate(LocalDate.now());
-
         dailyReport.setCreatedAt(now);
         dailyReport.setUpdatedAt(now);
+
         dailyReportRepository.save(dailyReport);
     }
 

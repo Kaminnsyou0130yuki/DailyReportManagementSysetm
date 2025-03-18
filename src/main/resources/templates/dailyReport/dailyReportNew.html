@@ -33,6 +33,7 @@
                             <label class="form-label" for="reportDate">日付</label>
                             <input class="form-control form-control-lg" type="date" style="max-width: 300px;"
                                 id="reportDate" th:field="*{reportDate}">
+                                <span th:errors="*{reportDate}" class="text-danger"></span>
                         </div>
                         <!--氏名-->
                         <div class="mb-3">
@@ -45,12 +46,14 @@
                             <label class="form-label" for="title">タイトル</label>
                             <input class="form-control form-control-lg" style="max-width: 500px;" id="title"
                                 th:field="*{title}">
+                                <span th:errors="*{title}" class="text-danger"></span>
                         </div>
                         <!--内容-->
                         <div class="mb-3">
                             <label class="form-label" for="content">内容</label>
                             <textarea class="form-control form-control-lg" style="max-width: 700px; height: 300px;"
                                 id="content" th:field="*{content}"></textarea>
+                                <span th:errors="*{content}" class="text-danger"></span>
                         </div>
                         <!--登録・戻るボタン-->
                         <p class="mt-t">

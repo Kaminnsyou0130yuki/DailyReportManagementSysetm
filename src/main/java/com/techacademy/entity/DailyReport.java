@@ -12,6 +12,8 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
 import lombok.Data;
 
 @Data
@@ -27,14 +29,17 @@ public class DailyReport {
 
 //    日付
     @Column(nullable = false)
+    @NotNull
     private LocalDate reportDate;
 
 //    タイトル
     @Column(length = 100, nullable = false)
+    @Size(max = 100)
     private String title;
 
 //    内容
     @Column(columnDefinition = "LONGTEXT", nullable = false)
+    @Size(max = 600)
     private String content;
 
 //    社員番号

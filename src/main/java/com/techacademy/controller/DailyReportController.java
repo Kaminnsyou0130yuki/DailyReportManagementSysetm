@@ -40,7 +40,7 @@ public class DailyReportController {
     }
 
     @GetMapping("/add")
-    public String create(Employee employee, Principal principal, Model model) {
+    public String create(Principal principal, Model model) {
         String code = principal.getName();
         model.addAttribute("employee", employeeService.findByCode(code));
         return "dailyReport/dailyReportNew";

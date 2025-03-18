@@ -1,5 +1,6 @@
 package com.techacademy.controller;
 
+import com.techacademy.entity.DailyReport;
 import com.techacademy.entity.Employee;
 import com.techacademy.repository.DailyReportRepository;
 import com.techacademy.service.DailyReportService;
@@ -12,6 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
@@ -19,13 +21,20 @@ import org.springframework.web.bind.annotation.RequestMapping;
 @RequestMapping("reports")
 public class DailyReportController {
 
+    private final EmployeeController employeeController;
+    private final DailyReportRepository dailyReportRepository;
     private final DailyReportService dailyReportService;
     private final EmployeeService employeeService;
 
     @Autowired
-    DailyReportController(DailyReportService dailyReportService, EmployeeService employeeService, DailyReportRepository dailyReportRepository, UserDetailService userDetailService, EmployeeController employeeController) {
+    DailyReportController(DailyReportService dailyReportService, EmployeeService employeeService,
+            DailyReportRepository dailyReportRepository, UserDetailService userDetailService,
+            EmployeeController employeeController) {
+
         this.dailyReportService = dailyReportService;
         this.employeeService = employeeService;
+        this.dailyReportRepository = dailyReportRepository;
+        this.employeeController = employeeController;
 
     }
 
@@ -39,6 +48,7 @@ public class DailyReportController {
 
     }
 
+//    新規登録画面
     @GetMapping("/add")
     public String create(Principal principal, Model model) {
         String code = principal.getName();
@@ -46,8 +56,15 @@ public class DailyReportController {
         return "dailyReport/dailyReportNew";
     }
 
+//    新規登録処理
+//    入力チェックも実装しなきゃいけない。画面設計者に入力チェック仕様が記載されている
     @PostMapping("/add")
-    public String add(Model model) {
+    public String add(@ModelAttribute DailyReport dailyReport, Principal principal, Model model) {
+        String code = principal.getName();
+        Employee employeeCode = employeeService.findByCode(code);
+        dailyReport.setEmployee(employeeCode);
+//        saveメソッドを作成する　EmployeeServiceクラスを参考にする
+        dailyReportService.save(dailyReport);
         return "redirect:/reports";
     }
 }

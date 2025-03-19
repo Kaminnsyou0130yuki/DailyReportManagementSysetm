@@ -1,14 +1,11 @@
 package com.techacademy.controller;
 
-import com.techacademy.DailyReportSystemApplication;
 import com.techacademy.constants.ErrorKinds;
 import com.techacademy.constants.ErrorMessage;
 import com.techacademy.entity.DailyReport;
 import com.techacademy.entity.Employee;
-import com.techacademy.repository.DailyReportRepository;
 import com.techacademy.service.DailyReportService;
 import com.techacademy.service.EmployeeService;
-import com.techacademy.service.UserDetailService;
 
 import java.security.Principal;
 
@@ -26,21 +23,15 @@ import org.springframework.web.bind.annotation.RequestMapping;
 @RequestMapping("reports")
 public class DailyReportController {
 
-    private final DailyReportRepository dailyReportRepository;
-
-    private final DailyReportSystemApplication dailyReportSystemApplication;
 
     private final DailyReportService dailyReportService;
     private final EmployeeService employeeService;
 
     @Autowired
-    DailyReportController(DailyReportService dailyReportService, EmployeeService employeeService,
-            UserDetailService userDetailService, DailyReportSystemApplication dailyReportSystemApplication, DailyReportRepository dailyReportRepository) {
+    DailyReportController(DailyReportService dailyReportService, EmployeeService employeeService) {
 
         this.dailyReportService = dailyReportService;
         this.employeeService = employeeService;
-        this.dailyReportSystemApplication = dailyReportSystemApplication;
-        this.dailyReportRepository = dailyReportRepository;
     }
 
 //    日報一覧画面
@@ -55,8 +46,11 @@ public class DailyReportController {
 //    新規登録画面
     @GetMapping("/add")
     public String create(@ModelAttribute DailyReport dailyReport, Principal principal, Model model) {
+//        ログイン中のユーザの社員番号取得
         String code = principal.getName();
+//        ログイン中のユーザの社員番号を使用してレコード取得
         Employee employee = employeeService.findByCode(code);
+//        dailyReportエンティティのemployeeにセット
         dailyReport.setEmployee(employee);
         return "dailyReport/dailyReportNew";
     }
@@ -99,6 +93,7 @@ public class DailyReportController {
 //        日報テーブルに　ログイン中のユーザかつ入力した日付　の日報データが存在する場合エラー
 //        ErrorMessagesクラスに専用のエラーメッセージあり
         if (dailyReportService.existsReportByEmployeeAndDate(employee, dailyReport.getReportDate())) {
+//            エラー名、エラーメッセージ取得
             String errorName = ErrorMessage.getErrorName(ErrorKinds.DATECHECK_ERROR);
             String errorValue = ErrorMessage.getErrorValue(ErrorKinds.DATECHECK_ERROR);
             model.addAttribute(errorName,errorValue);

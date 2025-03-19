@@ -4,7 +4,6 @@ package com.techacademy.service;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Optional;
 
 import org.springframework.stereotype.Service;
 
@@ -36,18 +35,10 @@ public class DailyReportService {
         dailyReportRepository.save(dailyReport);
     }
 
+//    employeeとreportDateが存在するかどうかチェック
+//    空かどうかを判定したいので、isEmptyがtrueの時にfalseを返すように実装
     public boolean existsReportByEmployeeAndDate(Employee employee, LocalDate reportDate) {
         return !dailyReportRepository.findByEmployeeAndReportDate(employee, reportDate).isEmpty();
     }
 
-
-    public DailyReport getReportByEmployeeAndDate(Employee employee, LocalDate reportDate) {
-        List<DailyReport> reports = dailyReportRepository.findByEmployeeAndReportDate(employee, reportDate);
-
-        if (reports.isEmpty()) {
-            return null; // データなし
-        } else {
-            return reports.get(0); // 最初の1件だけ返す
-        }
-    }
 }

@@ -34,6 +34,7 @@
                             <input class="form-control form-control-lg" type="date" style="max-width: 300px;"
                                 id="reportDate" th:field="*{reportDate}">
                                 <span th:errors="*{reportDate}" class="text-danger"></span>
+                                <span th:if="${reportDateError}" th:text="${reportDateError}" class="text-danger"></span>
                         </div>
                         <!--氏名-->
                         <div class="mb-3">

@@ -1,12 +1,15 @@
 package com.techacademy.service;
 
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.stereotype.Service;
 
 import com.techacademy.entity.DailyReport;
+import com.techacademy.entity.Employee;
 import com.techacademy.repository.DailyReportRepository;
 
 @Service
@@ -24,8 +27,8 @@ public class DailyReportService {
     }
 
 //    日報保存
-//    後で入力チェックの処理追加実装する
     public void save(DailyReport dailyReport) {
+
         LocalDateTime now = LocalDateTime.now();
         dailyReport.setCreatedAt(now);
         dailyReport.setUpdatedAt(now);
@@ -33,6 +36,18 @@ public class DailyReportService {
         dailyReportRepository.save(dailyReport);
     }
 
+    public boolean existsReportByEmployeeAndDate(Employee employee, LocalDate reportDate) {
+        return !dailyReportRepository.findByEmployeeAndReportDate(employee, reportDate).isEmpty();
+    }
 
 
+    public DailyReport getReportByEmployeeAndDate(Employee employee, LocalDate reportDate) {
+        List<DailyReport> reports = dailyReportRepository.findByEmployeeAndReportDate(employee, reportDate);
+
+        if (reports.isEmpty()) {
+            return null; // データなし
+        } else {
+            return reports.get(0); // 最初の1件だけ返す
+        }
+    }
 }

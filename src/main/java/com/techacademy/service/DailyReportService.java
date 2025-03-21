@@ -6,14 +6,13 @@ import java.util.List;
 import java.util.Optional;
 
 import org.springframework.stereotype.Service;
-
 import com.techacademy.entity.DailyReport;
 import com.techacademy.entity.Employee;
 import com.techacademy.repository.DailyReportRepository;
-import com.techacademy.repository.EmployeeRepository;
 
 @Service
 public class DailyReportService {
+
 
     private final DailyReportRepository dailyReportRepository;
 
@@ -21,12 +20,12 @@ public class DailyReportService {
         this.dailyReportRepository = dailyReportRepository;
     }
 
-    // 日報一覧表示
+// 日報一覧表示
     public List<DailyReport> findAll() {
         return dailyReportRepository.findAll();
     }
 
-    // 日報保存
+// 日報保存
     public void save(DailyReport dailyReport) {
 
         LocalDateTime now = LocalDateTime.now();
@@ -42,10 +41,19 @@ public class DailyReportService {
         return !dailyReportRepository.findByEmployeeAndReportDate(employee, reportDate).isEmpty();
     }
 
-    // 一件検索
+// 一件検索
     public DailyReport findById(Integer id) {
         Optional<DailyReport> option = dailyReportRepository.findById(id);
         DailyReport dailyReport = option.orElse(null);
         return dailyReport;
+    }
+
+//日報削除
+    public void delete(Integer id) {
+        DailyReport dailyReport = findById(id);
+        LocalDateTime now = LocalDateTime.now();
+        dailyReport.setUpdatedAt(now);
+        dailyReport.setDeleteFlg(true);
+        dailyReportRepository.save(dailyReport);
     }
 }

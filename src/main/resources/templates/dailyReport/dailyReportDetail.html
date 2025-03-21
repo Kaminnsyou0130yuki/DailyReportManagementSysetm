@@ -63,7 +63,7 @@
                                         class="btn btn-primary">更新</a>
                                 </div>
                                 <div class="col-auto">
-                                    <form name="form" th:action="@{/reportDate/{id}/delete(id=${id})}" method="post">
+                                    <form name="form" th:action="@{/reports/{id}/delete(id=${id})}" method="post">
                                         <input type="submit" value="削除" class="btn btn-primary">
                                     </form>
                                 </div>
@@ -72,8 +72,6 @@
                                 </div>
                             </div>
                         </div>
-                        <!--削除時のエラー表示-->
-                        <!--削除時のエラー表示ここまで-->
                     </div>
                 </div>
             </div>

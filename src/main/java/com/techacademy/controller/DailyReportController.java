@@ -20,23 +20,23 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+
 
 @Controller
 @RequestMapping("reports")
 public class DailyReportController {
 
-    private final DailyReportRepository dailyReportRepository;
-
     private final DailyReportService dailyReportService;
     private final EmployeeService employeeService;
 
     @Autowired
-    DailyReportController(DailyReportService dailyReportService, EmployeeService employeeService,
-            DailyReportRepository dailyReportRepository) {
+    DailyReportController(
+            DailyReportService dailyReportService,
+            EmployeeService employeeService) {
 
         this.dailyReportService = dailyReportService;
         this.employeeService = employeeService;
-        this.dailyReportRepository = dailyReportRepository;
     }
 
 // 日報一覧画面
@@ -99,5 +99,13 @@ public class DailyReportController {
         model.addAttribute("dailyReport", dailyReportService.findById(id));
         return "dailyReport/dailyReportDetail";
     }
+
+//  日報削除処理
+    @PostMapping("/{id}/delete")
+    public String delete(@PathVariable("id") Integer id, Model model) {
+        dailyReportService.delete(id);
+        return "redirect:/reports";
+    }
+
 
 }

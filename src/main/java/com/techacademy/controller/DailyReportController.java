@@ -22,21 +22,22 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 
-
 @Controller
 @RequestMapping("reports")
 public class DailyReportController {
+
+    private final DailyReportRepository dailyReportRepository;
 
     private final DailyReportService dailyReportService;
     private final EmployeeService employeeService;
 
     @Autowired
-    DailyReportController(
-            DailyReportService dailyReportService,
-            EmployeeService employeeService) {
+    DailyReportController(DailyReportService dailyReportService, EmployeeService employeeService,
+            DailyReportRepository dailyReportRepository) {
 
         this.dailyReportService = dailyReportService;
         this.employeeService = employeeService;
+        this.dailyReportRepository = dailyReportRepository;
     }
 
 // 日報一覧画面
@@ -107,5 +108,18 @@ public class DailyReportController {
         return "redirect:/reports";
     }
 
+// 日報更新画面表示
+    @GetMapping("/{id}/update")
+    public String edit(@PathVariable("id") Integer id, @ModelAttribute DailyReport dailyReport, Model model) {
+        model.addAttribute("dailyReport", dailyReportService.findById(id));
+        return "dailyReport/dailyReportUpdate";
+    }
 
+// 日報更新処理
+    @PostMapping("/{id}/update")
+    public String update(@PathVariable("id") Integer id, @ModelAttribute DailyReport dailyReport,
+            Model model) {
+        dailyReportRepository.save(dailyReport);
+        return "redirect:/reports";
+    }
 }

@@ -93,7 +93,7 @@ public class DailyReportController {
         return "redirect:/reports";
     }
 
-// 一件検索
+// 日報詳細画面
     @GetMapping("/{id}/")
     public String detail(@PathVariable("id") Integer id, Model model) {
         model.addAttribute("dailyReport", dailyReportService.findById(id));

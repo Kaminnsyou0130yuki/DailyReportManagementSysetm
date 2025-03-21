@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html class="h-100" xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+
+<head th:replace="common/header :: head_fragment(title=日報詳細)"></head>
+
+<body class="h-100 overflow-hidden">
+
+    <div class="row h-100 w-100">
+
+        <!--サイドバー-->
+        <div class="h-100 p-3 mb-2 bg-dark text-white col-sm-2">
+            <nav th:replace="common/side :: copy"></nav>
+        </div>
+        <!--サイドバーここまで-->
+
+        <!--メインコンテンツ-->
+        <div class="mt-3 h-100 col-sm-10">
+
+            <!--タイトル-->
+            <div class="container-fluid p-0">
+                <h1 class="h3 mb-3">日報 詳細</h1>
+            </div>
+            <!--タイトルここまで-->
+
+            <!--コンテンツ-->
+            <div class="mb-3 col-12 col-xxl-6">
+                <div class="col-xl-12">
+                    <div class="card">
+                        <div class="card-body mb-5">
+                            <table class="table table-striped">
+                                <tr>
+                                    <th class="w-25">日付</th>
+                                    <td class="align-middle" th:text="${dailyReport.reportDate}"></td>
+                                </tr>
+                                <tr>
+                                    <th>氏名</th>
+                                    <td class="align-middle" th:text="${dailyReport.employee.name}"></td>
+                                </tr>
+                                <tr>
+                                    <th>タイトル</th>
+                                    <td class="align-middle" th:text="${dailyReport.title}"></td>
+                                </tr>
+                                <tr>
+                                    <th>内容</th>
+                                    <td class="align-middle" th:text="${dailyReport.content}"></td>
+                                </tr>
+                                <tr>
+                                    <th>登録日時</th>
+                                    <td class="align-middle"
+                                        th:text="${#temporals.format(dailyReport.createdAt, 'yyyy-MM-dd hh:mm:ss')}">
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <th>更新日時</th>
+                                    <td class="align-middle"
+                                        th:text="${#temporals.format(dailyReport.updatedAt, 'yyyy-MM-dd hh:mm:ss')}">
+                                    </td>
+                                </tr>
+                            </table>
+                            <div class="mt-3 row g-1">
+                                <div class="col-auto">
+                                    <a href="@{/reports/{id}/update(id=${reportDate.id})}"
+                                        class="btn btn-primary">更新</a>
+                                </div>
+                                <div class="col-auto">
+                                    <form name="form" th:action="@{/reportDate/{id}/delete(id=${id})}" method="post">
+                                        <input type="submit" value="削除" class="btn btn-primary">
+                                    </form>
+                                </div>
+                                <div class="col-auto">
+                                    <a th:href="@{/reports}" class="btn btn-primary">戻る</a>
+                                </div>
+                            </div>
+                        </div>
+                        <!--削除時のエラー表示-->
+                        <!--削除時のエラー表示ここまで-->
+                    </div>
+                </div>
+            </div>
+            <!--コンテンツここまで-->

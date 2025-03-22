@@ -6,6 +6,8 @@ import java.util.List;
 import java.util.Optional;
 
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
 import com.techacademy.entity.DailyReport;
 import com.techacademy.entity.Employee;
 import com.techacademy.repository.DailyReportRepository;
@@ -48,7 +50,7 @@ public class DailyReportService {
         return dailyReport;
     }
 
-//日報削除
+// 日報削除
     public void delete(Integer id) {
         DailyReport dailyReport = findById(id);
         LocalDateTime now = LocalDateTime.now();
@@ -56,4 +58,25 @@ public class DailyReportService {
         dailyReport.setDeleteFlg(true);
         dailyReportRepository.save(dailyReport);
     }
+
+// 更新処理
+    @Transactional
+    public void update(DailyReport dailyReportUpdate,DailyReport dailyReport) {
+        dailyReportUpdate.setContent(dailyReport.getContent());
+        dailyReportUpdate.setTitle(dailyReport.getTitle());
+        dailyReportUpdate.setReportDate(dailyReport.getReportDate());
+        dailyReportUpdate.setUpdatedAt(LocalDateTime.now());
+        dailyReportRepository.save(dailyReportUpdate);
+    }
 }
+
+
+
+
+
+
+
+
+
+
+

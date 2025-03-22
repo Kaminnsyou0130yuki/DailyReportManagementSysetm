@@ -117,9 +117,9 @@ public class DailyReportController {
 
 // 日報更新処理
     @PostMapping("/{id}/update")
-    public String update(@PathVariable("id") Integer id, @ModelAttribute DailyReport dailyReport,
-            Model model) {
-        dailyReportRepository.save(dailyReport);
+    public String update(@PathVariable("id") Integer id, @ModelAttribute @Validated DailyReport dailyReport) {
+        DailyReport dailyReportUpdate = dailyReportService.findById(id);
+        dailyReportService.update(dailyReportUpdate,dailyReport);
         return "redirect:/reports";
     }
 }

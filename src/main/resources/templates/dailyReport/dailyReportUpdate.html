@@ -29,9 +29,9 @@
                         <!--日付-->
                         <div class="mb-3">
                             <label class="form-label" for="reportDate">日付</label>
-                            <!--日付の初期値を表示する方法がわからない-->
                             <input class="form-control form-control-lg" type="date" th:field="*{reportDate}"
                                 style="max-width: 300px;" id="reportDate">
+                            <span th:errors="*{reportDate}" class="text-danger"></span>
                         </div>
                         <!--氏名-->
                         <div class="mb-3">
@@ -44,12 +44,14 @@
                             <label class="form-label" for="title"></label>
                             <input class="form-control form-control-lg" th:field="*{title}" style="max-width: 500px;"
                                 id="title">
+                            <span th:errors="*{title}" class="text-danger"></span>
                         </div>
                         <!--内容-->
                         <div class="mb-3">
                             <label class="form-label" for="content"></label>
                             <textarea class="form-control form-control-lg" th:field="*{content}"
                                 style="max-width: 800px; height: 300px;" id="content"></textarea>
+                            <span th:errors="*{content}" class="text-danger"></span>
                         </div>
 
                         <!--空白-->

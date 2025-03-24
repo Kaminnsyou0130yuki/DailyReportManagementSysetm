@@ -1,5 +1,6 @@
 package com.techacademy.controller;
 
+import com.techacademy.DailyReportSystemApplication;
 import com.techacademy.constants.ErrorKinds;
 import com.techacademy.constants.ErrorMessage;
 import com.techacademy.entity.DailyReport;
@@ -26,6 +27,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 @RequestMapping("reports")
 public class DailyReportController {
 
+    private final DailyReportSystemApplication dailyReportSystemApplication;
+
     private final DailyReportRepository dailyReportRepository;
 
     private final DailyReportService dailyReportService;
@@ -33,11 +36,12 @@ public class DailyReportController {
 
     @Autowired
     DailyReportController(DailyReportService dailyReportService, EmployeeService employeeService,
-            DailyReportRepository dailyReportRepository) {
+            DailyReportRepository dailyReportRepository, DailyReportSystemApplication dailyReportSystemApplication) {
 
         this.dailyReportService = dailyReportService;
         this.employeeService = employeeService;
         this.dailyReportRepository = dailyReportRepository;
+        this.dailyReportSystemApplication = dailyReportSystemApplication;
     }
 
 // 日報一覧画面
@@ -111,15 +115,25 @@ public class DailyReportController {
 // 日報更新画面表示
     @GetMapping("/{id}/update")
     public String edit(@PathVariable("id") Integer id, @ModelAttribute DailyReport dailyReport, Model model) {
-        model.addAttribute("dailyReport", dailyReportService.findById(id));
+        if(id != null) {
+            model.addAttribute("dailyReport", dailyReportService.findById(id));
+        } else {
+            model.addAttribute("dailyReport", dailyReport);
+        }
         return "dailyReport/dailyReportUpdate";
     }
 
 // 日報更新処理
     @PostMapping("/{id}/update")
-    public String update(@PathVariable("id") Integer id, @ModelAttribute @Validated DailyReport dailyReport) {
+    public String update(@PathVariable("id") Integer id, @ModelAttribute @Validated DailyReport dailyReport,
+            BindingResult res, Model model) {
+
+        if (res.hasErrors()) {
+            return edit(null, dailyReport, model);
+        }
         DailyReport dailyReportUpdate = dailyReportService.findById(id);
-        dailyReportService.update(dailyReportUpdate,dailyReport);
+        dailyReportService.update(dailyReportUpdate, dailyReport);
+
         return "redirect:/reports";
     }
 }

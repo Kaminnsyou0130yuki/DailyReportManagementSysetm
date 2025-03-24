@@ -61,12 +61,12 @@ public class DailyReportService {
 
 // 更新処理
     @Transactional
-    public void update(DailyReport dailyReportUpdate,DailyReport dailyReport) {
-        dailyReportUpdate.setContent(dailyReport.getContent());
-        dailyReportUpdate.setTitle(dailyReport.getTitle());
-        dailyReportUpdate.setReportDate(dailyReport.getReportDate());
-        dailyReportUpdate.setUpdatedAt(LocalDateTime.now());
-        dailyReportRepository.save(dailyReportUpdate);
+    public void update(DailyReport dailyReportCurrentData,DailyReport dailyReport) {
+        dailyReportCurrentData.setContent(dailyReport.getContent());
+        dailyReportCurrentData.setTitle(dailyReport.getTitle());
+        dailyReportCurrentData.setReportDate(dailyReport.getReportDate());
+        dailyReportCurrentData.setUpdatedAt(LocalDateTime.now());
+        dailyReportRepository.save(dailyReportCurrentData);
     }
 }
 

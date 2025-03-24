@@ -1,11 +1,9 @@
 package com.techacademy.controller;
 
-import com.techacademy.DailyReportSystemApplication;
 import com.techacademy.constants.ErrorKinds;
 import com.techacademy.constants.ErrorMessage;
 import com.techacademy.entity.DailyReport;
 import com.techacademy.entity.Employee;
-import com.techacademy.repository.DailyReportRepository;
 import com.techacademy.service.DailyReportService;
 import com.techacademy.service.EmployeeService;
 
@@ -21,27 +19,20 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestBody;
 
 @Controller
 @RequestMapping("reports")
 public class DailyReportController {
 
-    private final DailyReportSystemApplication dailyReportSystemApplication;
-
-    private final DailyReportRepository dailyReportRepository;
 
     private final DailyReportService dailyReportService;
     private final EmployeeService employeeService;
 
     @Autowired
-    DailyReportController(DailyReportService dailyReportService, EmployeeService employeeService,
-            DailyReportRepository dailyReportRepository, DailyReportSystemApplication dailyReportSystemApplication) {
+    DailyReportController(DailyReportService dailyReportService, EmployeeService employeeService) {
 
         this.dailyReportService = dailyReportService;
         this.employeeService = employeeService;
-        this.dailyReportRepository = dailyReportRepository;
-        this.dailyReportSystemApplication = dailyReportSystemApplication;
     }
 
 // 日報一覧画面
@@ -132,8 +123,13 @@ public class DailyReportController {
             return edit(null, dailyReport, model);
         }
 
-        DailyReport dailyReportUpdate = dailyReportService.findById(id);
-        dailyReportService.update(dailyReportUpdate, dailyReport);
+        //idで検索し、dailyReportCurrentDataに更新用のレコードを格納
+        DailyReport dailyReportCurrentData = dailyReportService.findById(id);
+
+//      入力フォームで入力された日付がすでにDBに存在する場合、エラーメッセージを表示させる処理の記述
+
+        //フォームから送信されたdailyReportの値をdailyReportUpdateにsetしていき、dailyReportUpdateを引数にsaveを実行
+        dailyReportService.update(dailyReportCurrentData, dailyReport);
 
         return "redirect:/reports";
     }

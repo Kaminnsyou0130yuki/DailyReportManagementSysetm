@@ -131,6 +131,7 @@ public class DailyReportController {
         if (res.hasErrors()) {
             return edit(null, dailyReport, model);
         }
+
         DailyReport dailyReportUpdate = dailyReportService.findById(id);
         dailyReportService.update(dailyReportUpdate, dailyReport);
 

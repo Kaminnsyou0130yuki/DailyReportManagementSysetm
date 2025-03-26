@@ -10,19 +10,24 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import com.techacademy.constants.ErrorKinds;
+import com.techacademy.entity.DailyReport;
 import com.techacademy.entity.Employee;
+import com.techacademy.repository.DailyReportRepository;
 import com.techacademy.repository.EmployeeRepository;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class EmployeeService {
 
+    private final DailyReportRepository dailyReportRepository;
     private final EmployeeRepository employeeRepository;
     private final PasswordEncoder passwordEncoder;
 
-    public EmployeeService(EmployeeRepository employeeRepository, PasswordEncoder passwordEncoder) {
+    public EmployeeService(EmployeeRepository employeeRepository, PasswordEncoder passwordEncoder,
+            DailyReportRepository dailyREportRepository) {
         this.employeeRepository = employeeRepository;
         this.passwordEncoder = passwordEncoder;
+        this.dailyReportRepository = dailyREportRepository;
     }
 
     // 従業員保存
@@ -50,7 +55,7 @@ public class EmployeeService {
         return ErrorKinds.SUCCESS;
     }
 
-    //更新処理
+    // 更新処理
     @Transactional
     public ErrorKinds update(String code, Employee employee) {
 
@@ -86,6 +91,15 @@ public class EmployeeService {
             return ErrorKinds.LOGINCHECK_ERROR;
         }
         Employee employee = findByCode(code);
+
+        // 紐づいている日報を論理削除
+        List<DailyReport> dailyReports = dailyReportRepository.findByEmployee(employee);
+        for (DailyReport dailyReport : dailyReports) {
+            dailyReport.setDeleteFlg(true); // 日報を論理削除
+            dailyReport.setUpdatedAt(LocalDateTime.now()); // 更新日時を設定
+            dailyReportRepository.save(dailyReport); // 保存
+        }
+
         LocalDateTime now = LocalDateTime.now();
         employee.setUpdatedAt(now);
         employee.setDeleteFlg(true);

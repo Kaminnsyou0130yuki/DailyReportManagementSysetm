@@ -8,6 +8,7 @@ import com.techacademy.service.DailyReportService;
 import com.techacademy.service.EmployeeService;
 
 import java.security.Principal;
+import java.util.Objects;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -23,7 +24,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 @Controller
 @RequestMapping("reports")
 public class DailyReportController {
-
 
     private final DailyReportService dailyReportService;
     private final EmployeeService employeeService;
@@ -106,7 +106,7 @@ public class DailyReportController {
 // 日報更新画面表示
     @GetMapping("/{id}/update")
     public String edit(@PathVariable("id") Integer id, @ModelAttribute DailyReport dailyReport, Model model) {
-        if(id != null) {
+        if (id != null) {
             model.addAttribute("dailyReport", dailyReportService.findById(id));
         } else {
             model.addAttribute("dailyReport", dailyReport);
@@ -117,18 +117,35 @@ public class DailyReportController {
 // 日報更新処理
     @PostMapping("/{id}/update")
     public String update(@PathVariable("id") Integer id, @ModelAttribute @Validated DailyReport dailyReport,
-            BindingResult res, Model model) {
+            BindingResult res, Principal principal, Model model) {
 
         if (res.hasErrors()) {
             return edit(null, dailyReport, model);
         }
 
-        //idで検索し、dailyReportCurrentDataに更新用のレコードを格納
+        // idで検索し、dailyReportCurrentDataに更新用のレコードを格納
         DailyReport dailyReportCurrentData = dailyReportService.findById(id);
 
 //      入力フォームで入力された日付がすでにDBに存在する場合、エラーメッセージを表示させる処理の記述
+        // login中のユーザ情報を取得
+        // getNameで社員番号を取得
+        String code = principal.getName();
+        // employeeに社員番号で検索したレコード（ログイン中の従業員の情報）を格納
+        Employee employee = employeeService.findByCode(code);
 
-        //フォームから送信されたdailyReportの値をdailyReportUpdateにsetしていき、dailyReportUpdateを引数にsaveを実行
+        // 日報テーブルに ログイン中のユーザかつ入力した日付 の日報データが存在する場合
+        DailyReport existingReport = dailyReportService.findByEmployeeAndDate(employee, dailyReport.getReportDate());
+        // 編集中の日報と違うIDならエラー
+        // 他のユーザーの日報を誤ってエラーにしないために、現在編集中の日報のIDを確認
+        if (existingReport != null && !Objects.equals(existingReport.getId(), dailyReportCurrentData.getId())) {
+            // 日付重複エラーを表示
+            String errorName = ErrorMessage.getErrorName(ErrorKinds.DATECHECK_ERROR);
+            String errorValue = ErrorMessage.getErrorValue(ErrorKinds.DATECHECK_ERROR);
+            model.addAttribute(errorName, errorValue);
+            return edit(null, dailyReport, model);
+        }
+
+        // フォームから送信されたdailyReportの値をdailyReportUpdateにsetしていき、dailyReportUpdateを引数にsaveを実行
         dailyReportService.update(dailyReportCurrentData, dailyReport);
 
         return "redirect:/reports";

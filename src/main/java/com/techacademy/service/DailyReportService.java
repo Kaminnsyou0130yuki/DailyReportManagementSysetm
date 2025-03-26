@@ -15,7 +15,6 @@ import com.techacademy.repository.DailyReportRepository;
 @Service
 public class DailyReportService {
 
-
     private final DailyReportRepository dailyReportRepository;
 
     public DailyReportService(DailyReportRepository dailyReportRepository) {
@@ -37,10 +36,18 @@ public class DailyReportService {
         dailyReportRepository.save(dailyReport);
     }
 
-    // employeeとreportDateが存在するかどうかチェック
+// employeeとreportDateが存在するかどうかチェック
     // 空かどうかを判定したいので、isEmptyがtrueの時にfalseを返すように実装
     public boolean existsReportByEmployeeAndDate(Employee employee, LocalDate reportDate) {
         return !dailyReportRepository.findByEmployeeAndReportDate(employee, reportDate).isEmpty();
+    }
+
+    // 指定した従業員と日付の日報を取得（なければ null を返す）
+    public DailyReport findByEmployeeAndDate(Employee employee, LocalDate reportDate) {
+        return dailyReportRepository.findByEmployeeAndReportDate(employee, reportDate)
+                .stream()
+                .findFirst()
+                .orElse(null);
     }
 
 // 一件検索
@@ -61,7 +68,7 @@ public class DailyReportService {
 
 // 更新処理
     @Transactional
-    public void update(DailyReport dailyReportCurrentData,DailyReport dailyReport) {
+    public void update(DailyReport dailyReportCurrentData, DailyReport dailyReport) {
         dailyReportCurrentData.setContent(dailyReport.getContent());
         dailyReportCurrentData.setTitle(dailyReport.getTitle());
         dailyReportCurrentData.setReportDate(dailyReport.getReportDate());
@@ -69,14 +76,3 @@ public class DailyReportService {
         dailyReportRepository.save(dailyReportCurrentData);
     }
 }
-
-
-
-
-
-
-
-
-
-
-

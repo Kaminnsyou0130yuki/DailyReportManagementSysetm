@@ -51,7 +51,7 @@ public class DailyReportService {
     public DailyReport findByEmployeeAndDate(Employee employee, LocalDate reportDate) {
         return dailyReportRepository.findByEmployeeAndReportDate(employee, reportDate).stream() // streamに変換
                 .findFirst() // 最初の要素を取得
-                .orElse(null); // Optionalの中身があればその値を返す。なければnullを返す
+                .orElse(null); // Optionalの中身があればその値を返す　なければnullを返す
     }
 
     // 一件検索

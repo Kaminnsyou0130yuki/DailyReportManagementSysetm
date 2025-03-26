@@ -24,42 +24,42 @@ import lombok.Data;
 @SQLRestriction("delete_flg = false")
 public class DailyReport {
 
-//  ID
+    // ID
     @Id
     @Column(nullable = false)
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
 
-//    日付
+    // 日付
     @Column(nullable = false)
     @DateTimeFormat(pattern = "yyyy-MM-dd")
     @NotNull
     private LocalDate reportDate;
 
-//    タイトル
+    // タイトル
     @Column(length = 100, nullable = false)
     @Size(max = 100)
     private String title;
 
-//    内容
+    // 内容
     @Column(columnDefinition = "LONGTEXT", nullable = false)
     @Size(max = 600)
     private String content;
 
-//    社員番号
+    // 社員番号
     @ManyToOne
     @JoinColumn(name = "employee_code", referencedColumnName = "code")
     private Employee employee;
 
-//    削除フラグ
-    @Column(columnDefinition="TINYINT", nullable = false)
+    // 削除フラグ
+    @Column(columnDefinition = "TINYINT", nullable = false)
     private boolean deleteFlg;
 
-//    登録日時
+    // 登録日時
     @Column(nullable = false)
     private LocalDateTime createdAt;
 
-//    更新日時
+    // 更新日時
     @Column(nullable = false)
     private LocalDateTime updatedAt;
 

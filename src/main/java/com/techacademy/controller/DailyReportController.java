@@ -35,16 +35,32 @@ public class DailyReportController {
         this.employeeService = employeeService;
     }
 
-// 日報一覧画面
+    // 日報一覧画面
     @GetMapping
-    public String list(Model model) {
+    public String list(Model model, Principal principal) {
 
-        model.addAttribute("listSize", dailyReportService.findAll().size());
-        model.addAttribute("dairyReportList", dailyReportService.findAll());
+        // ログイン中のユーザーの情報を取得
+        String code = principal.getName();
+        // ログイン中のユーザの社員番号を使用してレコード取得
+        Employee employee = employeeService.findByCode(code);
+
+        // ログイン中のユーザが管理者かどうか判定
+        boolean existsAdmin = employee.getRole() == Employee.Role.ADMIN;
+
+        if (existsAdmin) {
+            // ログイン中のユーザが管理者であれば全日報を表示
+            model.addAttribute("listSize", dailyReportService.findAll().size());
+            model.addAttribute("dairyReportList", dailyReportService.findAll());
+        } else {
+            // ログイン中のユーザが一般ユーザであれば自身の日報のみを表示
+            model.addAttribute("listSize", dailyReportService.findByEmployee(employee).size());
+            model.addAttribute("dairyReportList", dailyReportService.findByEmployee(employee));
+        }
+
         return "dailyReport/dailyReportList";
     }
 
-// 新規登録画面
+    // 新規登録画面
     @GetMapping("/add")
     public String create(@ModelAttribute DailyReport dailyReport, Principal principal, Model model) {
         // ログイン中のユーザの社員番号取得
@@ -56,7 +72,7 @@ public class DailyReportController {
         return "dailyReport/dailyReportNew";
     }
 
-// 新規登録処理
+    // 新規登録処理
     @PostMapping("/add")
     public String add(@ModelAttribute @Validated DailyReport dailyReport, BindingResult res, Principal principal,
             Model model) {
@@ -89,21 +105,21 @@ public class DailyReportController {
         return "redirect:/reports";
     }
 
-// 日報詳細画面
+    // 日報詳細画面
     @GetMapping("/{id}/")
     public String detail(@PathVariable("id") Integer id, Model model) {
         model.addAttribute("dailyReport", dailyReportService.findById(id));
         return "dailyReport/dailyReportDetail";
     }
 
-//  日報削除処理
+    // 日報削除処理
     @PostMapping("/{id}/delete")
     public String delete(@PathVariable("id") Integer id, Model model) {
         dailyReportService.delete(id);
         return "redirect:/reports";
     }
 
-// 日報更新画面表示
+    // 日報更新画面表示
     @GetMapping("/{id}/update")
     public String edit(@PathVariable("id") Integer id, @ModelAttribute DailyReport dailyReport, Model model) {
         if (id != null) {
@@ -114,7 +130,7 @@ public class DailyReportController {
         return "dailyReport/dailyReportUpdate";
     }
 
-// 日報更新処理
+    // 日報更新処理
     @PostMapping("/{id}/update")
     public String update(@PathVariable("id") Integer id, @ModelAttribute @Validated DailyReport dailyReport,
             BindingResult res, Principal principal, Model model) {
@@ -126,7 +142,7 @@ public class DailyReportController {
         // idで検索し、dailyReportCurrentDataに更新用のレコードを格納
         DailyReport dailyReportCurrentData = dailyReportService.findById(id);
 
-//      入力フォームで入力された日付がすでにDBに存在する場合、エラーメッセージを表示させる処理の記述
+        // 入力フォームで入力された日付がすでにDBに存在する場合、エラーメッセージを表示させる処理の記述
         // login中のユーザ情報を取得
         // getNameで社員番号を取得
         String code = principal.getName();
@@ -136,9 +152,9 @@ public class DailyReportController {
         // 日報テーブルに ログイン中のユーザかつ入力した日付 の日報データが存在する場合
         DailyReport existingReport = dailyReportService.findByEmployeeAndDate(employee, dailyReport.getReportDate());
         // 編集中の日報と違うIDならエラー
-        // 他のユーザーの日報を誤ってエラーにしないために、現在編集中の日報のIDを確認
+        // existingReport=既存の日報データ dailyReportCurrentDataは現在編集中の日報データ
         if (existingReport != null && !Objects.equals(existingReport.getId(), dailyReportCurrentData.getId())) {
-            // 日付重複エラーを表示
+            // 日付重複がある場合にエラー表示
             String errorName = ErrorMessage.getErrorName(ErrorKinds.DATECHECK_ERROR);
             String errorValue = ErrorMessage.getErrorValue(ErrorKinds.DATECHECK_ERROR);
             model.addAttribute(errorName, errorValue);

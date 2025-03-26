@@ -21,12 +21,17 @@ public class DailyReportService {
         this.dailyReportRepository = dailyReportRepository;
     }
 
-// 日報一覧表示
+    // 日報一覧表示
     public List<DailyReport> findAll() {
         return dailyReportRepository.findAll();
     }
 
-// 日報保存
+    // 指定した従業員の日報のみを表示
+    public List<DailyReport> findByEmployee(Employee employee) {
+        return dailyReportRepository.findByEmployee(employee);
+    }
+
+    // 日報保存
     public void save(DailyReport dailyReport) {
 
         LocalDateTime now = LocalDateTime.now();
@@ -36,28 +41,27 @@ public class DailyReportService {
         dailyReportRepository.save(dailyReport);
     }
 
-// employeeとreportDateが存在するかどうかチェック
+    // employeeとreportDateが存在するかどうかチェック
     // 空かどうかを判定したいので、isEmptyがtrueの時にfalseを返すように実装
     public boolean existsReportByEmployeeAndDate(Employee employee, LocalDate reportDate) {
         return !dailyReportRepository.findByEmployeeAndReportDate(employee, reportDate).isEmpty();
     }
 
-    // 指定した従業員と日付の日報を取得（なければ null を返す）
+    // 指定した従業員と日付の日報を取得（該当するデータがなければ null を返す）
     public DailyReport findByEmployeeAndDate(Employee employee, LocalDate reportDate) {
-        return dailyReportRepository.findByEmployeeAndReportDate(employee, reportDate)
-                .stream()
-                .findFirst()
-                .orElse(null);
+        return dailyReportRepository.findByEmployeeAndReportDate(employee, reportDate).stream() // streamに変換
+                .findFirst() // 最初の要素を取得
+                .orElse(null); // Optionalの中身があればその値を返す。なければnullを返す
     }
 
-// 一件検索
+    // 一件検索
     public DailyReport findById(Integer id) {
         Optional<DailyReport> option = dailyReportRepository.findById(id);
         DailyReport dailyReport = option.orElse(null);
         return dailyReport;
     }
 
-// 日報削除
+    // 日報削除
     public void delete(Integer id) {
         DailyReport dailyReport = findById(id);
         LocalDateTime now = LocalDateTime.now();
@@ -66,7 +70,7 @@ public class DailyReportService {
         dailyReportRepository.save(dailyReport);
     }
 
-// 更新処理
+    // 更新処理
     @Transactional
     public void update(DailyReport dailyReportCurrentData, DailyReport dailyReport) {
         dailyReportCurrentData.setContent(dailyReport.getContent());

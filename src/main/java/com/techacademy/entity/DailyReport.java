@@ -14,6 +14,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
+import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.Data;
@@ -39,11 +40,13 @@ public class DailyReport {
     // タイトル
     @Column(length = 100, nullable = false)
     @Size(max = 100)
+    @NotBlank(message = "値を入力してください")
     private String title;
 
     // 内容
     @Column(columnDefinition = "LONGTEXT", nullable = false)
     @Size(max = 600)
+    @NotBlank(message = "値を入力してください")
     private String content;
 
     // 社員番号

@@ -39,13 +39,13 @@ public class DailyReport {
 
     // タイトル
     @Column(length = 100, nullable = false)
-    @Size(max = 100)
+    @Size(max = 100, message = "100文字以下で入力してください")
     @NotBlank(message = "値を入力してください")
     private String title;
 
     // 内容
     @Column(columnDefinition = "LONGTEXT", nullable = false)
-    @Size(max = 600)
+    @Size(max = 600, message = "600文字以下で入力してください")
     @NotBlank(message = "値を入力してください")
     private String content;
 

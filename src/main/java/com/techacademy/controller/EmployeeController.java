@@ -25,14 +25,11 @@ import com.techacademy.service.UserDetail;
 @RequestMapping("employees")
 public class EmployeeController {
 
-    private final EmployeeRepository employeeRepository;
-
     private final EmployeeService employeeService;
 
     @Autowired
-    public EmployeeController(EmployeeService employeeService, EmployeeRepository employeeRepository) {
+    public EmployeeController(EmployeeService employeeService) {
         this.employeeService = employeeService;
-        this.employeeRepository = employeeRepository;
     }
 
     // 従業員一覧画面
@@ -146,6 +143,7 @@ public class EmployeeController {
             model.addAttribute(ErrorMessage.getErrorName(result), ErrorMessage.getErrorValue(result));
             return edit(null, employee, model);
         }
+
         return "redirect:/employees";
     }
 }

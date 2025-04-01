@@ -5,8 +5,6 @@ import com.techacademy.constants.ErrorMessage;
 import com.techacademy.entity.DailyReport;
 import com.techacademy.entity.Employee;
 import com.techacademy.service.DailyReportService;
-import com.techacademy.service.EmployeeService;
-
 import java.security.Principal;
 import java.util.Objects;
 
@@ -26,29 +24,24 @@ import org.springframework.web.bind.annotation.RequestMapping;
 public class DailyReportController {
 
     private final DailyReportService dailyReportService;
-    private final EmployeeService employeeService;
 
     @Autowired
-    DailyReportController(DailyReportService dailyReportService, EmployeeService employeeService) {
+    DailyReportController(DailyReportService dailyReportService) {
 
         this.dailyReportService = dailyReportService;
-        this.employeeService = employeeService;
     }
 
     // 日報一覧画面
     @GetMapping
     public String list(Model model, Principal principal) {
-
-        // ログイン中のユーザーの情報を取得
-        String code = principal.getName();
-        // ログイン中のユーザの社員番号を使用してレコード取得
-        Employee employee = employeeService.findByCode(code);
+        // ログイン中のユーザ情報の取得
+        Employee employee = dailyReportService.getLoginUser(principal);
 
         // ログイン中のユーザが管理者かどうか判定
         boolean existsAdmin = employee.getRole() == Employee.Role.ADMIN;
 
         if (existsAdmin) {
-            // ログイン中のユーザが管理者であれば全日報を表示
+            // ログイン中のユーザが管理者であれば全社員の日報を表示
             model.addAttribute("listSize", dailyReportService.findAll().size());
             model.addAttribute("dairyReportList", dailyReportService.findAll());
         } else {
@@ -63,11 +56,8 @@ public class DailyReportController {
     // 新規登録画面
     @GetMapping("/add")
     public String create(@ModelAttribute DailyReport dailyReport, Principal principal, Model model) {
-        // ログイン中のユーザの社員番号取得
-        String code = principal.getName();
-        // ログイン中のユーザの社員番号を使用してレコード取得
-        Employee employee = employeeService.findByCode(code);
-        // dailyReportエンティティのemployeeにセット
+        // ログイン中のユーザ情報の取得
+        Employee employee = dailyReportService.getLoginUser(principal);
         dailyReport.setEmployee(employee);
         return "dailyReport/dailyReportNew";
     }
@@ -77,30 +67,23 @@ public class DailyReportController {
     public String add(@ModelAttribute @Validated DailyReport dailyReport, BindingResult res, Principal principal,
             Model model) {
 
-        // エラーがある場合、新規登録画面へ画面遷移
+        // バリデーションチェックがエラーの場合、新規登録画面を表示
         if (res.hasErrors()) {
             return create(dailyReport, principal, model);
         }
 
-        // login中のユーザ情報を取得
-        // getNameで社員番号を取得
-        String code = principal.getName();
-        // employeeに社員番号で検索したレコード（ログイン中の従業員の情報）を格納
-        Employee employee = employeeService.findByCode(code);
+        // ログイン中のユーザ情報の取得
+        Employee employee = dailyReportService.getLoginUser(principal);
 
-        // 日報テーブルに ログイン中のユーザかつ入力した日付 の日報データが存在する場合エラー
-        // ErrorMessagesクラスに専用のエラーメッセージあり
+        // ログイン中のユーザ かつ 入力した日付が日報テーブルに既に存在する場合にエラーを表示
         if (dailyReportService.existsReportByEmployeeAndDate(employee, dailyReport.getReportDate())) {
-            // エラー名、エラーメッセージ取得
             String errorName = ErrorMessage.getErrorName(ErrorKinds.DATECHECK_ERROR);
             String errorValue = ErrorMessage.getErrorValue(ErrorKinds.DATECHECK_ERROR);
             model.addAttribute(errorName, errorValue);
             return create(dailyReport, principal, model);
         }
 
-        // dailyReportのemployeeにそのレコード(ログイン中の従業員の情報)を格納
         dailyReport.setEmployee(employee);
-        // DBにデータを保存
         dailyReportService.save(dailyReport);
         return "redirect:/reports";
     }
@@ -135,33 +118,29 @@ public class DailyReportController {
     public String update(@PathVariable("id") Integer id, @ModelAttribute @Validated DailyReport dailyReport,
             BindingResult res, Principal principal, Model model) {
 
+        // バリデーションチェックがエラーの場合、日報更新画面を表示
         if (res.hasErrors()) {
             return edit(null, dailyReport, model);
         }
 
-        // idで検索し、dailyReportCurrentDataに更新用のレコードを格納
+        // 日報のidを参照し、現在編集中のデータを取得
         DailyReport dailyReportCurrentData = dailyReportService.findById(id);
 
-        // 入力フォームで入力された日付がすでにDBに存在する場合、エラーメッセージを表示させる処理の記述
-        // login中のユーザ情報を取得
-        // getNameで社員番号を取得
-        String code = principal.getName();
-        // employeeに社員番号で検索したレコード（ログイン中の従業員の情報）を格納
-        Employee employee = employeeService.findByCode(code);
+        // ログイン中のユーザ情報の取得
+        Employee employee = dailyReportService.getLoginUser(principal);
 
-        // 日報テーブルに ログイン中のユーザかつ入力した日付 の日報データが存在する場合
+        // ログイン中のユーザ かつ 入力された日付が同じデータを取得
         DailyReport existingReport = dailyReportService.findByEmployeeAndDate(employee, dailyReport.getReportDate());
-        // 編集中の日報と違うIDならエラー
-        // existingReport=既存の日報データ dailyReportCurrentDataは現在編集中の日報データ
+
+        // 現在編集中の日報と同じ日付が存在している かつ 既存の日報は今編集している日報とidが異なっている場合にエラーを表示
         if (existingReport != null && !Objects.equals(existingReport.getId(), dailyReportCurrentData.getId())) {
-            // 日付重複がある場合にエラー表示
             String errorName = ErrorMessage.getErrorName(ErrorKinds.DATECHECK_ERROR);
             String errorValue = ErrorMessage.getErrorValue(ErrorKinds.DATECHECK_ERROR);
             model.addAttribute(errorName, errorValue);
             return edit(null, dailyReport, model);
         }
 
-        // フォームから送信されたdailyReportの値をdailyReportUpdateにsetしていき、dailyReportUpdateを引数にsaveを実行
+        // 入力された値で日報を更新
         dailyReportService.update(dailyReportCurrentData, dailyReport);
 
         return "redirect:/reports";

@@ -7,22 +7,16 @@
 
     <div class="row h-100 w-100">
 
-        <!--サイドバー-->
         <div class="h-100 p-3 mb-2 bg-dark text-white col-sm-2">
             <nav th:replace="common/side :: copy"></nav>
         </div>
-        <!--サイドバーここまで-->
 
-        <!--メインコンテンツ-->
         <div class="mt-3 h-100 col-sm-10">
 
-            <!--タイトル-->
             <div class="container-fluid p-0">
                 <h1 class="h3 mb-3">日報 一覧</h1>
             </div>
-            <!--タイトルここまで-->
 
-            <!--コンテンツ-->
             <div class="row">
                 <div class="col-xl-11">
                     <div class="card">
@@ -42,7 +36,8 @@
                                         <td class="align-middle" th:text="${dairyReport.reportDate}"></td>
                                         <td class="align-middle" th:text="${dairyReport.title}"></td>
                                         <td class="align-middle">
-                                            <a th:href="@{/reports/{id}/(id=${dairyReport.id})}" class="btn btn-primary">詳細</a>
+                                            <a th:href="@{/reports/{id}/(id=${dairyReport.id})}"
+                                                class="btn btn-primary">詳細</a>
                                         </td>
                                     </tr>
                                 </tbody>
@@ -52,18 +47,14 @@
 
                     <p class="mb-3" th:text="'(全' + ${listSize} + '件)'"></p>
 
-                    <!--詳細ボタン・登録ボタン-->
                     <div class="col-auto">
                         <a th:href="@{/reports/add}" class="btn btn-primary">登録</a>
                     </div>
-                    <!--詳細ボタン・登録ボタンここまで-->
 
                 </div>
             </div>
 
-            <!--コンテンツここまで-->
 
-            <!--メインコンテンツここまで-->
         </div>
 </body>
 

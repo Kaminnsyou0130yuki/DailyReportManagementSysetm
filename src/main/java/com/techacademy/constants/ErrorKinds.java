@@ -21,6 +21,8 @@ public enum ErrorKinds {
     // チェックOK
     CHECK_OK,
     // 正常終了
-    SUCCESS;
+    SUCCESS,
+    //権限エラー
+    PERMISSION_DENIED_ERROR;
 
 }

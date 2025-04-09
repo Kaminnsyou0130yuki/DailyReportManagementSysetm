@@ -64,6 +64,9 @@
                                 <div class="col-auto">
                                     <a th:href="@{/reports}" class="btn btn-primary">戻る</a>
                                 </div>
+                                <div>
+                                    <span th:if="${permissionDeniedError}" th:text="${permissionDeniedError}" class="text-danger"></span>
+                                </div>
                             </div>
                         </div>
                     </div>

@@ -91,13 +91,26 @@ public class DailyReportController {
     // 日報詳細画面
     @GetMapping("/{id}/")
     public String detail(@PathVariable("id") Integer id, Model model) {
+
         model.addAttribute("dailyReport", dailyReportService.findById(id));
         return "dailyReport/dailyReportDetail";
     }
 
     // 日報削除処理
     @PostMapping("/{id}/delete")
-    public String delete(@PathVariable("id") Integer id, Model model) {
+    public String delete(@PathVariable("id") Integer id, Principal principal, Model model) {
+
+        // ログイン中のユーザ情報の取得
+        Employee employee = dailyReportService.getLoginUser(principal);
+
+        //ログイン中のユーザと削除しようとしている日報の作成者が異なるに場合エラーを表示
+        if (!employee.getCode().equals(dailyReportService.findById(id).getEmployee().getCode())) {
+            String errorName = ErrorMessage.getErrorName(ErrorKinds.PERMISSION_DENIED_ERROR);
+            String errorValue = ErrorMessage.getErrorValue(ErrorKinds.PERMISSION_DENIED_ERROR);
+            model.addAttribute(errorName, errorValue);
+            return detail(id, model);
+        }
+
         dailyReportService.delete(id);
         return "redirect:/reports";
     }

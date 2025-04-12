@@ -11,6 +11,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import com.techacademy.entity.Employee;
 
 public class UserDetail implements UserDetails {
+    //serialVersionUIDは互換性を保つために設定する
     private static final long serialVersionUID = 1L;
 
     private final Employee employee;

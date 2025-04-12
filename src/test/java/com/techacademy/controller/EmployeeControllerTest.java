@@ -19,7 +19,6 @@ import jakarta.transaction.Transactional;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.security.test.context.support.WithMockUser;
@@ -68,12 +67,14 @@ class EmployeeControllerTest {
         @SuppressWarnings("unchecked")
         List<Employee> employeeList = (List<Employee>) result.getModelAndView().getModel().get("employeeList");
 
+        // 社員番号1の従業員のテスト
         Employee employeeCode1 = employeeList.stream().filter(e -> "1".equals(e.getCode())).findFirst().get();
         assertEquals(employeeCode1.getCode(), "1");
         assertEquals(employeeCode1.getName(), "煌木　太郎");
         assertEquals(employeeCode1.getRole(), Role.ADMIN);
         assertEquals(employeeCode1.getPassword(), "$2a$10$vY93/U2cXCfEMBESYnDJUevcjJ208sXav23S.K8elE/J6Sxr4w5jO");
 
+        // 社員番号2の従業員のテスト
         Employee employeeCode2 = employeeList.stream().filter(e -> "2".equals(e.getCode())).findFirst().get();
         assertEquals(employeeCode2.getCode(), "2");
         assertEquals(employeeCode2.getName(), "田中　太郎");

@@ -43,11 +43,11 @@ public class DailyReportController {
         if (existsAdmin) {
             // ログイン中のユーザが管理者であれば全社員の日報を表示
             model.addAttribute("listSize", dailyReportService.findAll().size());
-            model.addAttribute("dairyReportList", dailyReportService.findAll());
+            model.addAttribute("dailyReportList", dailyReportService.findAll());
         } else {
             // ログイン中のユーザが一般ユーザであれば自身の日報のみを表示
             model.addAttribute("listSize", dailyReportService.findByEmployee(employee).size());
-            model.addAttribute("dairyReportList", dailyReportService.findByEmployee(employee));
+            model.addAttribute("dailyReportList", dailyReportService.findByEmployee(employee));
         }
 
         return "dailyReport/dailyReportList";

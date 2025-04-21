@@ -7,20 +7,24 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.view;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.context.WebApplicationContext;
 
 import com.techacademy.entity.DailyReport;
-
-import lombok.With;
+import com.techacademy.entity.Employee;
+import com.techacademy.service.EmployeeService;
 
 @SpringBootTest
 public class DailyReportControllerTest {
@@ -88,6 +92,32 @@ public class DailyReportControllerTest {
         assertEquals(dailyReport.getId(), 2);
         assertEquals(dailyReport.getTitle(), "田中　太郎の記載、タイトル");
         assertEquals(dailyReport.getContent(), "田中　太郎の記載、内容");
+    }
+
+    // 日報新規登録画面
+    @Test
+    @WithMockUser(username = "1")
+    void testCreate() throws Exception {
+        mockMvc.perform(get("/reports/add")).andExpect(status().isOk())
+                .andExpect(model().attributeExists("dailyReport")).andExpect(model().hasNoErrors())
+                .andExpect(view().name("dailyReport/dailyReportNew"));
+    }
+
+    // 日報新規登録処理
+    @Test
+    @Transactional
+    void testAddSuccess() throws Exception {
+        DailyReport dailyReport = new DailyReport();
+        LocalDate nowDate = LocalDate.now();
+        LocalDateTime nowDateTime = LocalDateTime.now();
+
+        dailyReport.setId(3);
+        dailyReport.setReportDate(nowDate);
+        dailyReport.setTitle("testTitle");
+        dailyReport.setContent("testContent");
+        dailyReport.setDeleteFlg(false);
+        dailyReport.setCreatedAt(nowDateTime);
+        dailyReport.setUpdatedAt(nowDateTime);
     }
 
 }

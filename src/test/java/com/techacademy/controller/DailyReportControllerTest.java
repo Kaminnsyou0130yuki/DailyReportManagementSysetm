@@ -20,6 +20,8 @@ import org.springframework.web.context.WebApplicationContext;
 
 import com.techacademy.entity.DailyReport;
 
+import lombok.With;
+
 @SpringBootTest
 public class DailyReportControllerTest {
 
@@ -59,6 +61,33 @@ public class DailyReportControllerTest {
         assertEquals(dailyReport2.getId(), 2);
         assertEquals(dailyReport2.getTitle(), "田中　太郎の記載、タイトル");
         assertEquals(dailyReport2.getContent(), "田中　太郎の記載、内容");
+    }
+
+    // 日報詳細画面
+    @Test
+    @WithMockUser(username = "1")
+    void testDetail1() throws Exception {
+        MvcResult result = mockMvc.perform(get("/reports/1/")).andExpect(status().isOk())
+                .andExpect(model().attributeExists("dailyReport")).andExpect(model().hasNoErrors())
+                .andExpect(view().name("dailyReport/dailyReportDetail")).andReturn();
+
+        DailyReport dailyReport = (DailyReport) result.getModelAndView().getModel().get("dailyReport");
+        assertEquals(dailyReport.getId(), 1);
+        assertEquals(dailyReport.getTitle(), "煌木　太郎の記載、タイトル");
+        assertEquals(dailyReport.getContent(), "煌木　太郎の記載、内容");
+    }
+
+    @Test
+    @WithMockUser(username = "2")
+    void testDetail2() throws Exception {
+        MvcResult result = mockMvc.perform(get("/reports/2/")).andExpect(status().isOk())
+                .andExpect(model().attributeExists("dailyReport")).andExpect(model().hasNoErrors())
+                .andExpect(view().name("dailyReport/dailyReportDetail")).andReturn();
+
+        DailyReport dailyReport = (DailyReport) result.getModelAndView().getModel().get("dailyReport");
+        assertEquals(dailyReport.getId(), 2);
+        assertEquals(dailyReport.getTitle(), "田中　太郎の記載、タイトル");
+        assertEquals(dailyReport.getContent(), "田中　太郎の記載、内容");
     }
 
 }
